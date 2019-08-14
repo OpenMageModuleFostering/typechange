@@ -44,10 +44,39 @@ $product = Mage::getModel('catalog/product')->load($id_copy);
 
 
 if($danex==1 or $danex==3){
+	
+$collectionat = Mage::getResourceModel('catalog/product_attribute_collection')->addVisibleFilter();
+		 
+foreach($collectionat as $itemsat){
+if($itemsat->getApplyTo()!=NULL and !in_array("grouped", $itemsat->getApplyTo()) ){ 
+$product->setData($itemsat->getAttributeCode(), '');		
+}}
+	
+//$product->setPrice(''); 
+//$product->setSpecialPrice('');
+//$product->setSpecialFromDate('');
+//$product->setSpecialToDate('');
+//$product->setMsrp('');
+//$product->setTaxClassId('');
+$product->save();
+
+$product = Mage::getModel('catalog/product')->load($id_copy);
+	
 $product->setTypeId('grouped');
 $product->setSku($product_old->getSku().'-grouped');
+
 }
 if($danex==2){
+	
+foreach($collectionat as $itemsat){
+if($itemsat->getApplyTo()!=NULL and !in_array("configurable", $itemsat->getApplyTo()) ){ 
+$product->setData($itemsat->getAttributeCode(), '');		
+}}	
+	
+$product->save();
+
+$product = Mage::getModel('catalog/product')->load($id_copy);
+		
 $product->setTypeId('configurable');
 $product->setSku($product_old->getSku().'-configurable');
 }
@@ -75,7 +104,7 @@ $product->setData('thumbnail', $imgfile );
 //{ $data[$temp_id] = array('qty'=>1,'postion'=>1);  }
 
 
-$product -> setGroupedLinkData($data);
+$product->setGroupedLinkData($data);
 $product->save();
 
 
